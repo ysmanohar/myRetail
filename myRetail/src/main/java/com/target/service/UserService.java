@@ -6,7 +6,7 @@ import com.target.model.User;
 
 public interface UserService {
 
-    List<User> getAll(int offset, int count);
+    List<User> getAll();
 
     User findById(int id);
 

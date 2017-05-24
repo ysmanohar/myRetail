@@ -30,7 +30,7 @@ public class UserController {
     public ResponseEntity<List<User>> getAll(@RequestParam(value = "offset", defaultValue = "0") int offset,
                                              @RequestParam(value = "count", defaultValue = "10") int count) {
         LOG.info("getting all users with offset: {}, and count: {}", offset, count);
-        List<User> users = userService.getAll(offset, count);
+        List<User> users = userService.getAll();
 
         if (users == null || users.isEmpty()){
             LOG.info("no users found");

@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
                     new User(counter.incrementAndGet(), "Cersei Baratheon")));
 
     @Override
-    public List<User> getAll(int offset, int count) {
+    public List<User> getAll() {
         return users;
     }
 
