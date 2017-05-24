@@ -1,7 +1,7 @@
 package com.target.controller;
 
-import com.target.model.User;
-import com.target.service.UserService;
+import com.target.model.Product;
+import com.target.service.ProductService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,81 +15,81 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/products")
 public class UserController {
 
     private final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    private UserService userService;
+    private ProductService userService;
 
     // =========================================== Get All Users ==========================================
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<User>> getAll(@RequestParam(value = "offset", defaultValue = "0") int offset,
+    public ResponseEntity<List<Product>> getAll(@RequestParam(value = "offset", defaultValue = "0") int offset,
                                              @RequestParam(value = "count", defaultValue = "10") int count) {
         LOG.info("getting all users with offset: {}, and count: {}", offset, count);
-        List<User> users = userService.getAll();
+        List<Product> products = userService.getAll();
 
-        if (users == null || users.isEmpty()){
+        if (products == null || products.isEmpty()){
             LOG.info("no users found");
-            return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Product>>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+        return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
     }
 
     // =========================================== Get User By ID =========================================
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ResponseEntity<User> get(@PathVariable("id") int id){
+    public ResponseEntity<Product> get(@PathVariable("id") int id){
         LOG.info("getting user with id: {}", id);
-        User user = userService.findById(id);
+        Product product = userService.findById(id);
 
-        if (user == null){
+        if (product == null){
             LOG.info("user with id {} not found", id);
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Product>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<User>(user, HttpStatus.OK);
+        return new ResponseEntity<Product>(product, HttpStatus.OK);
     }
 
     // =========================================== Create New User ========================================
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> create(@RequestBody User user, UriComponentsBuilder ucBuilder){
-        LOG.info("creating new user: {}", user);
+    public ResponseEntity<Void> create(@RequestBody Product product, UriComponentsBuilder ucBuilder){
+        LOG.info("creating new product: {}", product);
 
-        if (userService.exists(user)){
-            LOG.info("a user with name " + user.getUsername() + " already exists");
+        if (userService.exists(product)){
+            LOG.info("a user with name " + product.getProductname() + " already exists");
             return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
 
-        userService.create(user);
+        userService.create(product);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri());
+        headers.setLocation(ucBuilder.path("/user/{id}").buildAndExpand(product.getId()).toUri());
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }
 
     // =========================================== Update Existing User ===================================
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<User> update(@PathVariable int id, @RequestBody User user){
-        LOG.info("updating user: {}", user);
-        User currentUser = userService.findById(id);
+    public ResponseEntity<Product> update(@PathVariable int id, @RequestBody Product product){
+        LOG.info("updating user: {}", product);
+        Product currentproduct = userService.findById(id);
 
-        if (currentUser == null){
+        if (currentproduct == null){
             LOG.info("User with id {} not found", id);
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Product>(HttpStatus.NOT_FOUND);
         }
 
-        currentUser.setId(user.getId());
-        currentUser.setUsername(user.getUsername());
+        currentproduct.setId(product.getId());
+        currentproduct.setProductname(product.getProductname());
 
-        userService.update(user);
-        return new ResponseEntity<User>(currentUser, HttpStatus.OK);
+        userService.update(product);
+        return new ResponseEntity<Product>(currentproduct, HttpStatus.OK);
     }
 
     // =========================================== Delete User ============================================
@@ -97,9 +97,9 @@ public class UserController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable("id") int id){
         LOG.info("deleting user with id: {}", id);
-        User user = userService.findById(id);
+        Product product = userService.findById(id);
 
-        if (user == null){
+        if (product == null){
             LOG.info("Unable to delete. User with id {} not found", id);
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }

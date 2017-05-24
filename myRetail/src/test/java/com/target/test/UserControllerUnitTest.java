@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.config.WebConfig;
 import com.target.controller.UserController;
 import com.target.filter.CORSFilter;
-import com.target.model.User;
-import com.target.service.UserService;
+import com.target.model.Product;
+import com.target.service.ProductService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ public class UserControllerUnitTest {
     private MockMvc mockMvc;
 
     @Mock
-    private UserService userService;
+    private ProductService productService;
 
     @InjectMocks
     private UserController userController;
@@ -51,164 +51,164 @@ public class UserControllerUnitTest {
 
     @Test
     public void test_get_all_success() throws Exception {
-        List<User> users = Arrays.asList(
-                new User(1, "Daenerys Targaryen"),
-                new User(2, "John Snow"));
+        List<Product> products = Arrays.asList(
+                new Product(1, "Daenerys Targaryen",23.89,"USD"),
+                new Product(2, "John Snow",18.89,"USD"));
 
-        when(userService.getAll()).thenReturn(users);
+        when(productService.getAll()).thenReturn(products);
 
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/products"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].username", is("Daenerys Targaryen")))
+                .andExpect(jsonPath("$[0].productname", is("Daenerys Targaryen")))
                 .andExpect(jsonPath("$[1].id", is(2)))
-                .andExpect(jsonPath("$[1].username", is("John Snow")));
+                .andExpect(jsonPath("$[1].productname", is("John Snow")));
 
-        verify(userService, times(1)).getAll();
-        verifyNoMoreInteractions(userService);
+        verify(productService, times(1)).getAll();
+        verifyNoMoreInteractions(productService);
     }
 
     // =========================================== Get User By ID =========================================
 
     @Test
     public void test_get_by_id_success() throws Exception {
-        User user = new User(1, "Daenerys Targaryen");
+        Product product = new Product(1, "Daenerys Targaryen",28.19,"USD");
 
-        when(userService.findById(1)).thenReturn(user);
+        when(productService.findById(1)).thenReturn(product);
 
-        mockMvc.perform(get("/users/{id}", 1))
+        mockMvc.perform(get("/products/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.username", is("Daenerys Targaryen")));
+                .andExpect(jsonPath("$.productname", is("Daenerys Targaryen")));
 
-        verify(userService, times(1)).findById(1);
-        verifyNoMoreInteractions(userService);
+        verify(productService, times(1)).findById(1);
+        verifyNoMoreInteractions(productService);
     }
 
     @Test
     public void test_get_by_id_fail_404_not_found() throws Exception {
-        when(userService.findById(1)).thenReturn(null);
+        when(productService.findById(1)).thenReturn(null);
 
-        mockMvc.perform(get("/users/{id}", 1))
+        mockMvc.perform(get("/products/{id}", 1))
                 .andExpect(status().isNotFound());
 
-        verify(userService, times(1)).findById(1);
-        verifyNoMoreInteractions(userService);
+        verify(productService, times(1)).findById(1);
+        verifyNoMoreInteractions(productService);
     }
 
     // =========================================== Create New User ========================================
 
     @Test
     public void test_create_user_success() throws Exception {
-        User user = new User("Arya Stark");
+        Product product = new Product("Arya Stark");
 
-        when(userService.exists(user)).thenReturn(false);
-        doNothing().when(userService).create(user);
+        when(productService.exists(product)).thenReturn(false);
+        doNothing().when(productService).create(product);
 
         mockMvc.perform(
-                post("/users")
+                post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(user)))
+                        .content(asJsonString(product)))
                 .andExpect(status().isCreated());
               
 
-        verify(userService, times(1)).exists(user);
-        verify(userService, times(1)).create(user);
-        verifyNoMoreInteractions(userService);
+        verify(productService, times(1)).exists(product);
+        verify(productService, times(1)).create(product);
+        verifyNoMoreInteractions(productService);
     }
 
     @Test
     public void test_create_user_fail_404_not_found() throws Exception {
-        User user = new User("username exists");
+        Product product = new Product("username exists");
 
-        when(userService.exists(user)).thenReturn(true);
+        when(productService.exists(product)).thenReturn(true);
 
         mockMvc.perform(
-                post("/users")
+                post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(user)))
+                        .content(asJsonString(product)))
                 .andExpect(status().isConflict());
 
-        verify(userService, times(1)).exists(user);
-        verifyNoMoreInteractions(userService);
+        verify(productService, times(1)).exists(product);
+        verifyNoMoreInteractions(productService);
     }
 
     // =========================================== Update Existing User ===================================
 
     @Test
     public void test_update_user_success() throws Exception {
-        User user = new User(1, "Arya Stark");
+        Product product = new Product(1, "Arya Stark",5.89,"INR");
 
-        when(userService.findById(user.getId())).thenReturn(user);
-        doNothing().when(userService).update(user);
+        when(productService.findById(product.getId())).thenReturn(product);
+        doNothing().when(productService).update(product);
 
         mockMvc.perform(
-                put("/users/{id}", user.getId())
+                put("/products/{id}", product.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(user)))
+                        .content(asJsonString(product)))
                 .andExpect(status().isOk());
 
-        verify(userService, times(1)).findById(user.getId());
-        verify(userService, times(1)).update(user);
-        verifyNoMoreInteractions(userService);
+        verify(productService, times(1)).findById(product.getId());
+        verify(productService, times(1)).update(product);
+        verifyNoMoreInteractions(productService);
     }
 
     @Test
     public void test_update_user_fail_404_not_found() throws Exception {
-        User user = new User(999, "user not found");
+        Product product = new Product(999, "user not found",3.89,"USD");
 
-        when(userService.findById(user.getId())).thenReturn(null);
+        when(productService.findById(product.getId())).thenReturn(null);
 
         mockMvc.perform(
-                put("/users/{id}", user.getId())
+                put("/products/{id}", product.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(user)))
+                        .content(asJsonString(product)))
                 .andExpect(status().isNotFound());
 
-        verify(userService, times(1)).findById(user.getId());
-        verifyNoMoreInteractions(userService);
+        verify(productService, times(1)).findById(product.getId());
+        verifyNoMoreInteractions(productService);
     }
 
     // =========================================== Delete User ============================================
 
     @Test
     public void test_delete_user_success() throws Exception {
-        User user = new User(1, "Arya Stark");
+        Product product = new Product(1, "Arya Stark",13.89,"USD");
 
-        when(userService.findById(user.getId())).thenReturn(user);
-        doNothing().when(userService).delete(user.getId());
+        when(productService.findById(product.getId())).thenReturn(product);
+        doNothing().when(productService).delete(product.getId());
 
         mockMvc.perform(
-                delete("/users/{id}", user.getId()))
+                delete("/products/{id}", product.getId()))
                 .andExpect(status().isOk());
 
-        verify(userService, times(1)).findById(user.getId());
-        verify(userService, times(1)).delete(user.getId());
-        verifyNoMoreInteractions(userService);
+        verify(productService, times(1)).findById(product.getId());
+        verify(productService, times(1)).delete(product.getId());
+        verifyNoMoreInteractions(productService);
     }
 
     @Test
     public void test_delete_user_fail_404_not_found() throws Exception {
-        User user = new User(999, "user not found");
+        Product product = new Product(999, "user not found",33.89,"USD");
 
-        when(userService.findById(user.getId())).thenReturn(null);
+        when(productService.findById(product.getId())).thenReturn(null);
 
         mockMvc.perform(
-                delete("/users/{id}", user.getId()))
+                delete("/products/{id}", product.getId()))
                 .andExpect(status().isNotFound());
 
-        verify(userService, times(1)).findById(user.getId());
-        verifyNoMoreInteractions(userService);
+        verify(productService, times(1)).findById(product.getId());
+        verifyNoMoreInteractions(productService);
     }
 
     // =========================================== CORS Headers ===========================================
 
     @Test
     public void test_cors_headers() throws Exception {
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/products"))
                 .andExpect(header().string("Access-Control-Allow-Origin", "*"))
                 .andExpect(header().string("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE"))
                 .andExpect(header().string("Access-Control-Allow-Headers", "*"))
