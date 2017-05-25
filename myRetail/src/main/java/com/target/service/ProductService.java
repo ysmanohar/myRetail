@@ -11,6 +11,8 @@ public interface ProductService {
     Product findById(int id);
 
     Product findByName(String name);
+    
+    List<Product> findByNameandId(String name,int id);
 
     void create(Product user);
 
@@ -19,4 +21,6 @@ public interface ProductService {
     void delete(int id);
 
     boolean exists(Product user);
+    
+    String getproductname();
 }

@@ -1,17 +1,30 @@
 package com.target.service;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.target.controller.UserController;
 import com.target.model.Product;
+import com.target.repository.ProductRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 @Service
 public class ProductServiceImpl implements ProductService {
-
+	
+	private final Logger LOG = LoggerFactory.getLogger(UserController.class);
+	
+	@Autowired
+	private ProductRepository repository;
+	
+	 
+ 
     
     static List<Product> products = new ArrayList<Product>(
             Arrays.asList(
@@ -66,4 +79,23 @@ public class ProductServiceImpl implements ProductService {
     public boolean exists(Product product) {
         return findByName(product.getProductname()) != null;
     }
+
+	@Override
+	public List<Product> findByNameandId(String name, int id) {
+		List<Product> outputproduct= new ArrayList<Product>();
+		List<Product> firebaseproducts=repository.getdata();
+		for (Product product : firebaseproducts){
+			LOG.info(product.getProductname()+"given name"+name.substring(1,name.length()-1)+"givenid"+ product.getId() +" "+id);
+            if (product.getProductname().equals(name.substring(1,name.length()-1))&&product.getId()==id){
+            	outputproduct.add(product);
+            }
+        } 
+		return outputproduct;
+	}
+
+	@Override
+	public String getproductname() {
+		String productname=repository.getproductname();
+		return productname;
+	}
 }
