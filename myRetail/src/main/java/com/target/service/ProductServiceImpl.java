@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.target.controller.UserController;
+import com.target.model.Price;
 import com.target.model.Product;
 import com.target.repository.ProductRepository;
 
@@ -28,10 +29,10 @@ public class ProductServiceImpl implements ProductService {
     
     static List<Product> products = new ArrayList<Product>(
             Arrays.asList(
-                    new Product(1, "Daenerys Targaryen",15.49,"USD"),
-                    new Product(2, "John Snow",17.49,"USD"),
-                    new Product(3, "Arya Stark",198.49,"USD"),
-                    new Product(4, "Cersei Baratheon",113.49,"USD")));
+                    new Product(1, "Daenerys Targaryen",new Price(15.49,"USD")),
+                    new Product(2, "John Snow",new Price(17.49,"USD")),
+                    new Product(3, "Arya Stark",new Price(198.49,"USD")),
+                    new Product(4, "Cersei Baratheon",new Price(113.49,"USD"))));
 
     @Override
     public List<Product> getAll() {
@@ -77,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public boolean exists(Product product) {
-        return findByName(product.getProductname()) != null;
+        return findById(product.getId()) != null;
     }
 
 	@Override

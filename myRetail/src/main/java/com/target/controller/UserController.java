@@ -76,7 +76,7 @@ public class UserController {
         LOG.info("creating new product: {}", product);
 
         if (productService.exists(product)){
-            LOG.info("a user with name " + product.getProductname() + " already exists");
+            LOG.info("a user with id " + product.getId() + " already exists");
             return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
 
@@ -93,16 +93,17 @@ public class UserController {
     public ResponseEntity<Product> update(@PathVariable int id, @RequestBody Product product){
         LOG.info("updating user: {}", product);
         Product currentproduct = productService.findById(id);
+        //LOG.info(currentproduct.getProductname());
 
         if (currentproduct == null){
             LOG.info("User with id {} not found", id);
             return new ResponseEntity<Product>(HttpStatus.NOT_FOUND);
         }
 
-        currentproduct.setId(product.getId());
         currentproduct.setProductname(product.getProductname());
+        currentproduct.setPrice(product.getPrice());
 
-        productService.update(product);
+        productService.update(currentproduct);
         return new ResponseEntity<Product>(currentproduct, HttpStatus.OK);
     }
 

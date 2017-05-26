@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.config.WebConfig;
 import com.target.controller.UserController;
 import com.target.filter.CORSFilter;
+import com.target.model.Price;
 import com.target.model.Product;
 import com.target.service.ProductService;
 import org.junit.Before;
@@ -52,8 +53,8 @@ public class UserControllerUnitTest {
     @Test
     public void test_get_all_success() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product(1, "Daenerys Targaryen",23.89,"USD"),
-                new Product(2, "John Snow",18.89,"USD"));
+                new Product(1, "Daenerys Targaryen",new Price(23.89,"USD")),
+                new Product(2, "John Snow",new Price(18.89,"USD")));
 
         when(productService.getAll()).thenReturn(products);
 
@@ -74,7 +75,7 @@ public class UserControllerUnitTest {
 
     @Test
     public void test_get_by_id_success() throws Exception {
-        Product product = new Product(1, "Daenerys Targaryen",28.19,"USD");
+        Product product = new Product(1, "Daenerys Targaryen",new Price(28.19,"USD"));
 
         when(productService.findById(1)).thenReturn(product);
 
@@ -140,7 +141,7 @@ public class UserControllerUnitTest {
 
     @Test
     public void test_update_user_success() throws Exception {
-        Product product = new Product(1, "Arya Stark",5.89,"INR");
+        Product product = new Product(1, "Arya Stark",new Price(5.89,"INR"));
 
         when(productService.findById(product.getId())).thenReturn(product);
         doNothing().when(productService).update(product);
@@ -158,7 +159,7 @@ public class UserControllerUnitTest {
 
     @Test
     public void test_update_user_fail_404_not_found() throws Exception {
-        Product product = new Product(999, "user not found",3.89,"USD");
+        Product product = new Product(999, "user not found",new Price(3.89,"USD"));
 
         when(productService.findById(product.getId())).thenReturn(null);
 
@@ -176,7 +177,7 @@ public class UserControllerUnitTest {
 
     @Test
     public void test_delete_user_success() throws Exception {
-        Product product = new Product(1, "Arya Stark",13.89,"USD");
+        Product product = new Product(1, "Arya Stark",new Price(13.89,"USD"));
 
         when(productService.findById(product.getId())).thenReturn(product);
         doNothing().when(productService).delete(product.getId());
@@ -192,7 +193,7 @@ public class UserControllerUnitTest {
 
     @Test
     public void test_delete_user_fail_404_not_found() throws Exception {
-        Product product = new Product(999, "user not found",33.89,"USD");
+        Product product = new Product(999, "user not found",new Price(33.89,"USD"));
 
         when(productService.findById(product.getId())).thenReturn(null);
 

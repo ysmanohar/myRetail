@@ -32,8 +32,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 	@Override
 	public List<Product> getdata() {
 		RestTemplate restTemplate = new RestTemplate();
-	    ResponseEntity<Product[]> responseEntity  = restTemplate.getForEntity("https://myretail-808b8.firebaseio.com/menu.json", Product[].class);
+	    ResponseEntity<Product[]> responseEntity  = restTemplate.getForEntity("https://myretail-808b8.firebaseio.com/.json", Product[].class);
 	    Product[] firebaseproduct=responseEntity.getBody();
+	    LOG.info(firebaseproduct.toString());
 	    List<Product> products = new ArrayList<Product>(Arrays.asList(firebaseproduct));
 	    LOG.info(products.get(0).getProductname());
 		return products;
