@@ -99,41 +99,22 @@ public class UserControllerUnitTest {
         verify(productService, times(1)).findById(1);
         verifyNoMoreInteractions(productService);
     }
-
-    // =========================================== Create New User ========================================
-
+    
+    
+ // =========================================== Get Product Name ===================================
+    
     @Test
-    public void test_create_user_success() throws Exception {
-        Product product = new Product("Arya Stark");
+    public void test_get_by_productname_success() throws Exception {
+        String product = "apple";
 
-        when(productService.exists(product)).thenReturn(false);
-        doNothing().when(productService).create(product);
+        when(productService.getproductname()).thenReturn(product);
 
-        mockMvc.perform(
-                post("/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(product)))
-                .andExpect(status().isCreated());
-              
+        mockMvc.perform(get("/products/getproductname"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is("apple")));
+               
 
-        verify(productService, times(1)).exists(product);
-        verify(productService, times(1)).create(product);
-        verifyNoMoreInteractions(productService);
-    }
-
-    @Test
-    public void test_create_user_fail_404_not_found() throws Exception {
-        Product product = new Product("username exists");
-
-        when(productService.exists(product)).thenReturn(true);
-
-        mockMvc.perform(
-                post("/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(product)))
-                .andExpect(status().isConflict());
-
-        verify(productService, times(1)).exists(product);
+        verify(productService, times(1)).getproductname();
         verifyNoMoreInteractions(productService);
     }
 
